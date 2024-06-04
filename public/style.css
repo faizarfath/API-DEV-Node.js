@@ -1,0 +1,11 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+#usersList {
+  list-style-type: none;
+  padding: 0;
+}
+#usersList li {
+  margin: 5px 0;
+}
