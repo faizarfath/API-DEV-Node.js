@@ -13,3 +13,17 @@ exports.getUserByUsername = (username) => {
     });
   });
 };
+
+// Model method for retrieving all users
+exports.getAllUsers = () => {
+  return new Promise((resolve, reject) => {
+    const query = 'SELECT * FROM LOGIN';
+    connection.query(query, (err, results) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(results); // Return the array of users
+      }
+    });
+  });
+};
