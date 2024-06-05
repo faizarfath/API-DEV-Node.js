@@ -3,6 +3,9 @@ const router = express.Router();
 const loginController = require('../controllers/loginController');
 
 // Route to handle user login
-router.post('/', loginController.loginUser);
+router.post('/login', loginController.loginUser);
+
+// Route to retrieve all users
+router.get('/users', loginController.getAllUsers);
 
 module.exports = router;
