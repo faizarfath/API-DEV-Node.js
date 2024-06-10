@@ -1,4 +1,12 @@
+const Joi = require('joi');
 const connection = require('../utils/mysqlConnection');
+
+// Joi schema for validating user creation/update input
+const userSchema = Joi.object({
+  name: Joi.string().required(),
+  age: Joi.number().integer().min(0).required(),
+  id: Joi.number().integer().min(1).required() // Assuming user ID is a positive integer
+});
 
 // Controller methods for handling user-related logic
 
@@ -15,12 +23,13 @@ exports.getAllUsers = (req, res) => {
 
 // Create a new user
 exports.createUser = (req, res) => {
-  const { name, age, id } = req.body; // Adjust according to your USER table schema
-
   // Validate the input data
-  if (!name || !age || !id) {
-    return res.status(400).json({ error: 'Missing required fields' });
+  const { error } = userSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
   }
+
+  const { name, age, id } = req.body; // Adjust according to your USER table schema
 
   const query = 'INSERT INTO USER (name, age, id) VALUES (?, ?, ?)';
   const values = [name, age, id];
@@ -40,8 +49,9 @@ exports.updateUser = (req, res) => {
   const { name, age } = req.body; // Get the updated user details from the request body
 
   // Validate the input data
-  if (!name || !age) {
-    return res.status(400).json({ error: 'Missing required fields' });
+  const { error } = userSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
   }
 
   const query = 'UPDATE USER SET name = ?, age = ? WHERE id = ?';
