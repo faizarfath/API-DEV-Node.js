@@ -1,16 +1,24 @@
+const Joi = require('joi');
 const loginModel = require('../models/loginModel');
 const { comparePasswords } = require('../utils/bcryptUtil');
 
+// Schema for validating login input
+const loginSchema = Joi.object({
+  username: Joi.string().required(),
+  password: Joi.string().required()
+});
+
 // Controller method for handling user login
 exports.loginUser = async (req, res) => {
-  const { username, password } = req.body;
-
-  // Validate the input data
-  if (!username || !password) {
-    return res.status(400).json({ error: 'Missing required fields' });
-  }
-
   try {
+    // Validate the input data
+    const { error } = loginSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
+    
+    const { username, password } = req.body;
+
     // Retrieve the user from the database by username
     const user = await loginModel.getUserByUsername(username);
 
